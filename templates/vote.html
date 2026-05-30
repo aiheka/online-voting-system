@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Vote</h2>
+
+<form method="POST">
+
+{% for candidate in candidates %}
+
+<div>
+
+<input type="radio"
+       name="candidate"
+       value="{{ candidate.id }}"
+       required>
+
+{{ candidate.name }}
+
+</div>
+
+{% endfor %}
+
+<br>
+
+<button class="btn btn-success">
+Vote
+</button>
+
+</form>
+
+{% endblock %}

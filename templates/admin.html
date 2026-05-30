@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Admin Dashboard</h2>
+
+<form method="POST">
+
+<input type="text"
+       name="title"
+       placeholder="Election Name"
+       class="form-control mb-2">
+
+<button class="btn btn-primary">
+Create Election
+</button>
+
+</form>
+
+<hr>
+
+{% for election in elections %}
+
+<div class="card p-3 mb-2">
+
+    <h5>{{ election.title }}</h5>
+
+    <a href="/add_candidate/{{ election.id }}"
+       class="btn btn-success">
+
+        Add Candidate
+
+    </a>
+
+</div>
+
+{% endfor %}
+
+{% endblock %}

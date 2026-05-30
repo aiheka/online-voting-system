@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Available Elections</h2>
+
+{% for election in elections %}
+
+<div class="card p-3 mb-2">
+
+    <h5>{{ election.title }}</h5>
+
+    <a href="/vote/{{ election.id }}"
+       class="btn btn-primary">
+
+        Vote
+
+    </a>
+
+</div>
+
+{% endfor %}
+
+{% endblock %}
