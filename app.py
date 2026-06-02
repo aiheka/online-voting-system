@@ -1,8 +1,23 @@
 from flask import Flask, render_template, request, redirect, session, url_for
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
-
+from authlib.integrations.flask_client import OAuth
+import os
 app = Flask(__name__)
+oauth = OAuth(app)
+print("CLIENT_ID =", os.environ.get("CLIENT_ID"))
+print("TENANT_ID =", os.environ.get("TENANT_ID"))
+print("CLIENT_SECRET =", os.environ.get("CLIENT_SECRET"))
+
+oauth.register(
+    name='microsoft',
+    client_id=os.environ.get('CLIENT_ID'),
+    client_secret=os.environ.get('CLIENT_SECRET'),
+    server_metadata_url=f"https://login.microsoftonline.com/{os.environ.get('TENANT_ID')}/v2.0/.well-known/openid-configuration",
+    client_kwargs={
+        'scope': 'openid email profile'
+    }
+)
 
 app.config['SECRET_KEY'] = 'secret123'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///voting.db'
@@ -43,6 +58,29 @@ class Vote(db.Model):
 @app.route('/')
 def home():
     return redirect('/login')
+@app.route('/microsoft_login')
+def microsoft_login():
+
+    redirect_uri = url_for(
+        'authorize',
+        _external=True
+    )
+
+    return oauth.microsoft.authorize_redirect(
+        redirect_uri
+    )
+
+
+@app.route('/getAToken')
+def authorize():
+
+    token = oauth.microsoft.authorize_access_token()
+
+    user = token.get('userinfo')
+
+    session['user'] = user
+
+    return redirect('/dashboard')
 
 
 @app.route('/register', methods=['GET', 'POST'])
